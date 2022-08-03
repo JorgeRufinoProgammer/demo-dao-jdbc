@@ -36,7 +36,7 @@ public class Programm {
 //		System.out.println();
 
 		System.out.println("==========   TEST 5: Seller FindByField()   ==========");		
-		sellers = sellerDao.findByFields("alex", "gmail", 2090.0, "comput");
+		sellers = sellerDao.findByFields("grey", "@gmail", 2090.0, "comput");
 		sellers.forEach(System.out::println);
 
 	}

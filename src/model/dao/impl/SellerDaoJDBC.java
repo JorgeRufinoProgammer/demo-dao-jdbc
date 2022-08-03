@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import db.DB;
 import db.DbException;
@@ -215,30 +216,34 @@ public class SellerDaoJDBC implements SellerDao{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 				
+		Map<String, Object> mapFields = new TreeMap<>();
+		
+		mapFields.put("s.Name", name);
+		mapFields.put("s.Email", email);
+		mapFields.put("s.BaseSalary", salary);
+		mapFields.put("d.Name", depName);
+		
 		String condition = "";		
 		
-		//Preciso verificar se a String é "null" ou se ela esta em branco/vazio ("") pois o metodo Empty nao faz as duas verificaçoes
-		if (!(name == null || name.isEmpty()))  {
-			condition = "s.Name like '%"+name+"%'";
-		}
-		if (!(email == null || email.isEmpty()))  {
-			if (!condition.equals("")){
-				condition +=" AND "; 
+		for (String key : mapFields.keySet()) {
+			if (mapFields.get(key) != null) {	//Pega somente as keys que nao tiverem valor "null"
+				//Vai passar os valores na query de acordo com o tipo dos dados na tabela
+				String complemento = "";
+				
+				if (mapFields.get(key) instanceof String) {	//Se o valor for uma instancia de String					
+					complemento += " like '%"+mapFields.get(key)+"%'";
+				}
+				if (mapFields.get(key) instanceof Double) {	//Se o valor for uma instancia de Double
+					complemento += " = "+mapFields.get(key);
+				}
+				
+				if (condition.isEmpty()) {
+					condition += key + complemento;
+				}
+				else {				
+					condition += " AND " + key + complemento;
+				}
 			}
-			condition += "s.Email like '%"+email+"%'";
-		}
-		
-		if (salary != null)  {
-			if (!condition.equals("")){
-				condition +=" AND "; 
-			}
-			condition += "s.BaseSalary = " + salary;
-		}
-		if (!(depName == null || depName.isEmpty()))  {			
-			if (!condition.equals("")){
-				condition +=" AND ";
-			}
-			condition += "d.Name like '%"+depName+"%'";
 		}
 		
 		try {
