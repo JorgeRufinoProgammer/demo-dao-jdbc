@@ -210,5 +210,70 @@ public class SellerDaoJDBC implements SellerDao{
 		}
 	}
 
+	@Override
+	public List<Seller> findByField(String nameField, String valueField) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+				
+		String condition = "";
+		
+		if (nameField.toUpperCase().equals("NAME")) {
+			condition = "s.Name like '%"+valueField+"%'";
+		}
+		else if (nameField.toUpperCase().equals("EMAIL")) {
+			condition = "s.Email like '%"+valueField+"%'";
+		}
+		else if (nameField.toUpperCase().equals("SALARY")) {
+			condition = "s.BaseSalary = " + Double.parseDouble(valueField);
+		}
+		else if (nameField.toUpperCase().equals("DEPNAME")) {
+			condition = "d.Name like '%"+valueField+"%'";
+		}
+		else {
+			throw new DbException("Field not exist!");
+		}
+		
+		
+		try {
+			String query = "SELECT s.*, d.Name as DepName "
+					+ "FROM seller s INNER JOIN department d "
+					+ "ON s.DepartmentId = d.Id "
+					+ "WHERE " + condition
+					+ " ORDER BY s.Name";
+			
+		//	System.out.println(query);
+			st = conn.prepareStatement(query);
+			
+			rs = st.executeQuery();
+		
+			List<Seller> sellers =  new ArrayList<>();
+			
+			//Este Map vai guardar os objetos Department
+			Map<Integer, Department> map = new HashMap<>();
+			
+			while(rs.next()) {	
+				
+				Department dep = map.get(rs.getInt("DepartmentId"));
+				
+				if(dep == null) {
+					dep = instantiateDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep);
+				}
+				
+				Seller obj = instantiateSeller(rs, dep);	//Cria um objeto Seller vinculado ao Department acima
+				sellers.add(obj);
+			}
+			return sellers;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
+	}
+
 }
+
 
