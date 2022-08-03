@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,41 @@ public class SellerDaoJDBC implements SellerDao{
 	
 	@Override
 	public void insert(Seller obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("INSERT INTO seller "
+					+ "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+					+ "VALUES "
+					+ "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);	//Faz retornar tb o ID da linha(s) inserida
+			
+			st.setString(1, obj.getName());
+			st.setString(2, obj.getEmail());
+			st.setDate(3, new java.sql.Date(obj.getDate().getTime()));
+			st.setDouble(4, obj.getSalary());			
+			st.setInt(5, obj.getDepartment().getId());
+			
+			int rowsAffect = st.executeUpdate();	//Executa no banco a query e retorna o numero de linhas afetadas
+			
+			if(rowsAffect > 0 ) {					//Se numero de linhas for maior que zero, é pq a query foi executada e gerou pelo menos uma linha 
+				ResultSet rs =  st.getGeneratedKeys();	//Pega o ID(s) da linha(s) que foi inserida(s) 
+				if (rs.next()) {					
+					int id = rs.getInt(1);
+					obj.setId(id);		//Seta o Id no objeto que foi recebido como argumento no metodo e inserido no banco para ficar atualizado
+				}
+				//Foi fechado aqui pois a variavel "rs" só existe no escopo do "if"
+				DB.closeResultSet(rs); 
+			}
+			//Se der algum erro e o insert na for feito, dispara esta exceção
+			else {	
+				throw new DbException("Unexpected error! No rows affected");
+			}
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 		
 	}
 
