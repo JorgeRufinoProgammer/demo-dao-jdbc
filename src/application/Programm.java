@@ -35,9 +35,8 @@ public class Programm {
 //		System.out.println("Inserted! New id: " + newSeller.getId());
 //		System.out.println();
 
-		System.out.println("==========   TEST 5: Seller FindByField()   ==========");
-		System.out.println("Rows contains department name 'comput':");
-		sellers = sellerDao.findByField("depname", "comput");
+		System.out.println("==========   TEST 5: Seller FindByField()   ==========");		
+		sellers = sellerDao.findByFields("alex", "gmail", 2090.0, "comput");
 		sellers.forEach(System.out::println);
 
 	}

@@ -211,28 +211,35 @@ public class SellerDaoJDBC implements SellerDao{
 	}
 
 	@Override
-	public List<Seller> findByField(String nameField, String valueField) {
+	public List<Seller> findByFields(String name, String email, Double salary, String depName) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 				
-		String condition = "";
+		String condition = "";		
 		
-		if (nameField.toUpperCase().equals("NAME")) {
-			condition = "s.Name like '%"+valueField+"%'";
+		//Preciso verificar se a String é "null" ou se ela esta em branco/vazio ("") pois o metodo Empty nao faz as duas verificaçoes
+		if (!(name == null || name.isEmpty()))  {
+			condition = "s.Name like '%"+name+"%'";
 		}
-		else if (nameField.toUpperCase().equals("EMAIL")) {
-			condition = "s.Email like '%"+valueField+"%'";
-		}
-		else if (nameField.toUpperCase().equals("SALARY")) {
-			condition = "s.BaseSalary = " + Double.parseDouble(valueField);
-		}
-		else if (nameField.toUpperCase().equals("DEPNAME")) {
-			condition = "d.Name like '%"+valueField+"%'";
-		}
-		else {
-			throw new DbException("Field not exist!");
+		if (!(email == null || email.isEmpty()))  {
+			if (!condition.equals("")){
+				condition +=" AND "; 
+			}
+			condition += "s.Email like '%"+email+"%'";
 		}
 		
+		if (salary != null)  {
+			if (!condition.equals("")){
+				condition +=" AND "; 
+			}
+			condition += "s.BaseSalary = " + salary;
+		}
+		if (!(depName == null || depName.isEmpty()))  {			
+			if (!condition.equals("")){
+				condition +=" AND ";
+			}
+			condition += "d.Name like '%"+depName+"%'";
+		}
 		
 		try {
 			String query = "SELECT s.*, d.Name as DepName "
@@ -241,7 +248,7 @@ public class SellerDaoJDBC implements SellerDao{
 					+ "WHERE " + condition
 					+ " ORDER BY s.Name";
 			
-		//	System.out.println(query);
+//			System.out.println(query);
 			st = conn.prepareStatement(query);
 			
 			rs = st.executeQuery();
