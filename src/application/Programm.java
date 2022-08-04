@@ -43,7 +43,7 @@ public class Programm {
 		
 		System.out.println("==========   TEST 6: Seller update()   ==========");		
 		seller = sellerDao.findById(1);
-		seller.setName("Bob Mustafa");
+		seller.setName("Cleiton Miranda");
 		seller.setSalary(2500.0);
 		sellerDao.update(seller);	
 		
