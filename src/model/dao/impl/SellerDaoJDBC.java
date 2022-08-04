@@ -83,6 +83,7 @@ public class SellerDaoJDBC implements SellerDao{
 			st.setInt(6, obj.getId());
 			
 			st.executeUpdate();	//Executa no banco a query e retorna o numero de linhas afetadas
+			System.out.println("Upadate completed!");
 		}
 		catch (SQLException e) {
 			throw new DbException(e.getMessage());
@@ -95,8 +96,28 @@ public class SellerDaoJDBC implements SellerDao{
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
 		
+		try {
+			st = conn.prepareStatement("DELETE from seller WHERE id = ?");
+			
+			st.setInt(1, id);
+			
+			int rowsAffected = st.executeUpdate();
+			
+			if (rowsAffected == 0) {
+				throw new DbException("Delete failed!");
+			}
+			else {
+				System.out.println("Delete success!");
+			}
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 	}
 
 	@Override

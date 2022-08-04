@@ -1,5 +1,6 @@
 package application;
 
+import java.util.Date;
 import java.util.List;
 
 import model.dao.DaoFactory;
@@ -29,11 +30,11 @@ public class Programm {
 		sellers.forEach(System.out::println);
 		System.out.println();
 
-//		System.out.println("==========   TEST 4: Seller insert()   ==========");
-//		Seller newSeller = new Seller(null, "Greg", "greg@gmail.com", new Date(), 4000.0, department);
-//		sellerDao.insert(newSeller);
-//		System.out.println("Inserted! New id: " + newSeller.getId());
-//		System.out.println();
+		System.out.println("==========   TEST 4: Seller insert()   ==========");
+		Seller newSeller = new Seller(null, "Greg", "greg@gmail.com", new Date(), 4000.0, department);
+		sellerDao.insert(newSeller);
+		System.out.println("Inserted! New id: " + newSeller.getId());
+		System.out.println();
 
 		System.out.println("==========   TEST 5: Seller FindByField()   ==========");		
 		sellers = sellerDao.findByFields("alex", "@gmail", null, "comput");
@@ -44,8 +45,10 @@ public class Programm {
 		seller = sellerDao.findById(1);
 		seller.setName("Bob Mustafa");
 		seller.setSalary(2500.0);
-		sellerDao.update(seller);
-		System.out.println("Upadate completed!");
+		sellerDao.update(seller);	
+		
+		System.out.println("==========   TEST 7: Seller delete()   ==========");
+		sellerDao.deleteById(9);		
 	}
 
 }
