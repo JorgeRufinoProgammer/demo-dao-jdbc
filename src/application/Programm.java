@@ -36,9 +36,16 @@ public class Programm {
 //		System.out.println();
 
 		System.out.println("==========   TEST 5: Seller FindByField()   ==========");		
-		sellers = sellerDao.findByFields("grey", "@gmail", 2090.0, "comput");
+		sellers = sellerDao.findByFields("alex", "@gmail", null, "comput");
 		sellers.forEach(System.out::println);
-
+		System.out.println();
+		
+		System.out.println("==========   TEST 6: Seller update()   ==========");		
+		seller = sellerDao.findById(1);
+		seller.setName("Bob Mustafa");
+		seller.setSalary(2500.0);
+		sellerDao.update(seller);
+		System.out.println("Upadate completed!");
 	}
 
 }
